@@ -3,191 +3,215 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Grade Calc</title>
-
+  <title>Grade calc</title>
   <style>
-    :root {
-      --blue: #2563eb;
-      --bg-light: #f1f5f9;
-      --card-light: #ffffff;
-      --bg-dark: #0f172a;
-      --card-dark: #020617;
-      --text-light: #020617;
-      --text-dark: #e5e7eb;
-      --fail: #fecaca;
+    :root{
+      --blue:#1e5aa8;
+      --bg-light:#f4f6f9;
+      --bg-dark:#0f172a;
+      --card-light:#ffffff;
+      --card-dark:#1e293b;
+      --text-light:#0f172a;
+      --text-dark:#e5e7eb;
+      --fail:#f8d7da;
     }
-
-    body {
-      font-family: Arial, sans-serif;
-      background: var(--bg-dark);
-      color: var(--text-dark);
-      padding: 20px;
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, sans-serif;
+      background:var(--bg-light);
+      color:var(--text-light);
+      transition:0.3s;
     }
-
-    body.light {
-      background: var(--bg-light);
-      color: var(--text-light);
+    body.dark{
+      background:var(--bg-dark);
+      color:var(--text-dark);
     }
-
-    header {
-      position: relative;
-      text-align: center;
-      margin-bottom: 20px;
+    header{
+      background:var(--blue);
+      color:white;
+      padding:15px;
+      position:relative;
+      text-align:center;
     }
-
-    header img {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 70px;
+    header img{
+      position:absolute;
+      top:10px;
+      right:10px;
+      width:70px;
     }
-
-    h1 {
-      color: var(--blue);
-      margin-bottom: 10px;
+    .ayah{
+      font-size:26px;
+      margin-top:5px;
     }
-
-    .ayah {
-      font-size: 18px;
-      margin-bottom: 10px;
+    .container{
+      padding:20px;
+      max-width:1000px;
+      margin:auto;
     }
-
-    button {
-      padding: 8px 14px;
-      border-radius: 6px;
-      border: none;
-      background: var(--blue);
-      color: white;
-      cursor: pointer;
-      margin: 5px;
+    .controls{
+      display:flex;
+      gap:15px;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:15px;
     }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
+    table{
+      width:100%;
+      border-collapse:collapse;
     }
-
-    th, td {
-      border: 1px solid #94a3b8;
-      padding: 6px;
-      text-align: center;
+    th,td{
+      border:1px solid #ccc;
+      padding:8px;
+      text-align:center;
     }
-
-    input {
-      width: 90%;
-      padding: 4px;
+    body.dark th, body.dark td{border-color:#334155;}
+    th{background:#e8eef8;}
+    body.dark th{background:#24344d;}
+    tr.fail{background:var(--fail);}
+    button{
+      padding:6px 10px;
+      cursor:pointer;
     }
-
-    .fail {
-      background: var(--fail);
+    .add{
+      background:var(--blue);
+      color:white;
+      border:none;
     }
-
-    .controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
+    .theme{
+      cursor:pointer;
     }
-
-    .avg-box {
-      margin-top: 20px;
-      font-size: 20px;
-      font-weight: bold;
-      text-align: center;
+    .modal{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.6);
+      display:none;
+      align-items:center;
+      justify-content:center;
+    }
+    .modal-content{
+      background:white;
+      padding:20px;
+      width:300px;
+    }
+    body.dark .modal-content{background:var(--card-dark);}
+    .modal-content input{
+      width:100%;
+      margin:5px 0;
+      padding:6px;
+    }
+    .avg-box{
+      font-weight:bold;
     }
   </style>
 </head>
 <body>
-
 <header>
-  <!-- ضع الصورة باسم logo.png داخل الريبو -->
-  <img src="logo.png" alt="Faculty Logo">
-  <h1>Grade Calc</h1>
+  <img src="logo.png" alt="logo" />
+  <h1>Grade calc</h1>
   <div class="ayah" id="ayah">{وَقُلْ رَبِّ زِدْنِي عِلْمًا}</div>
-  <label>
-    <input type="checkbox" checked onchange="toggleAyah(this)"> إظهار الآية
-  </label>
 </header>
 
-<div class="controls">
-  <button onclick="addRow()">➕ إضافة مادة</button>
-  <button onclick="toggleTheme()">🌙 / ☀️</button>
+<div class="container">
+  <div class="controls">
+    <button class="add" onclick="addRow()">➕ إضافة مادة</button>
+    <label class="theme">
+      🌙 <input type="checkbox" onchange="toggleTheme()" />
+    </label>
+  </div>
+
+  <table id="table">
+    <thead>
+      <tr>
+        <th>المادة</th>
+        <th>Credits</th>
+        <th>Partial</th>
+        <th>Final</th>
+        <th>Average</th>
+        <th>Raise</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h3 id="gpa">المعدل العام: --</h3>
 </div>
 
-<table id="gradesTable">
-  <thead>
-    <tr>
-      <th>المادة</th>
-      <th>Credits</th>
-      <th>Partial</th>
-      <th>Final</th>
-      <th>Raise</th>
-      <th>Average</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
-
-<div class="avg-box" id="overall"></div>
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h3>معدل الدفعة</h3>
+    <input id="mp" type="number" placeholder="Partial avg" />
+    <input id="mf" type="number" placeholder="Final avg" />
+    <button onclick="applyRaise()">OK</button>
+  </div>
+</div>
 
 <script>
-  function addRow() {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td><input></td>
-      <td><input type="number"></td>
-      <td><input type="number" oninput="calculate()"></td>
-      <td><input type="number" oninput="calculate()"></td>
-      <td class="raise">0</td>
-      <td class="avg">0</td>
-    `;
-    document.querySelector('#gradesTable tbody').appendChild(row);
+let currentRow=null;
+
+function addRow(){
+  const tr=document.createElement('tr');
+  tr.innerHTML=`
+    <td><input></td>
+    <td><input type="number"></td>
+    <td><input type="number" oninput="calc(this)"></td>
+    <td><input type="number" oninput="calc(this)"></td>
+    <td class="avg-box">--</td>
+    <td><button onclick="openRaise(this)">Raise</button></td>
+  `;
+  document.querySelector('tbody').appendChild(tr);
+}
+
+function calc(el){
+  const tr=el.closest('tr');
+  const p=+tr.children[2].firstChild.value||0;
+  const f=+tr.children[3].firstChild.value||0;
+  const high=Math.max(p,f);
+  const low=Math.min(p,f);
+  let avg=high*0.6+low*0.4;
+  tr.children[4].textContent=avg.toFixed(2);
+  tr.classList.toggle('fail',avg<60);
+  calcGPA();
+}
+
+function openRaise(btn){
+  currentRow=btn.closest('tr');
+  modal.style.display='flex';
+}
+
+function applyRaise(){
+  const mp=+document.getElementById('mp').value;
+  const mf=+document.getElementById('mf').value;
+  const high=Math.max(mp,mf);
+  const low=Math.min(mp,mf);
+  const classAvg=high*0.6+low*0.4;
+  if(classAvg<66){
+    const raise=66-classAvg;
+    let avg=parseFloat(currentRow.children[4].textContent);
+    avg=Math.min(100,avg+raise);
+    currentRow.children[4].textContent=avg.toFixed(2);
+    currentRow.classList.toggle('fail',avg<60);
   }
+  modal.style.display='none';
+  document.getElementById('mp').value='';
+  document.getElementById('mf').value='';
+  calcGPA();
+}
 
-  function calculate() {
-    let total = 0;
-    let creditsSum = 0;
-
-    document.querySelectorAll('#gradesTable tbody tr').forEach(row => {
-      const credits = Number(row.children[1].querySelector('input').value);
-      const p = Number(row.children[2].querySelector('input').value);
-      const f = Number(row.children[3].querySelector('input').value);
-
-      if (!credits || !p || !f) return;
-
-      const high = Math.max(p, f);
-      const low = Math.min(p, f);
-      let avg = high * 0.6 + low * 0.4;
-
-      let raise = 0;
-      if (avg < 66) raise = 66 - avg;
-
-      const finalAvg = avg + raise;
-
-      row.children[4].innerText = raise.toFixed(2);
-      row.children[5].innerText = finalAvg.toFixed(2);
-
-      row.classList.toggle('fail', finalAvg < 60);
-
-      total += finalAvg * credits;
-      creditsSum += credits;
-    });
-
-    if (creditsSum > 0) {
-      document.getElementById('overall').innerText =
-        `المعدل العام: ${(total / creditsSum).toFixed(2)}`;
+function calcGPA(){
+  let sum=0,credits=0;
+  document.querySelectorAll('tbody tr').forEach(tr=>{
+    const c=+tr.children[1].firstChild.value||0;
+    const a=parseFloat(tr.children[4].textContent);
+    if(!isNaN(a)){
+      sum+=a*c;
+      credits+=c;
     }
-  }
+  });
+  document.getElementById('gpa').textContent=
+    credits?`المعدل العام: ${(sum/credits).toFixed(2)}`:'المعدل العام: --';
+}
 
-  function toggleTheme() {
-    document.body.classList.toggle('light');
-  }
-
-  function toggleAyah(checkbox) {
-    document.getElementById('ayah').style.display = checkbox.checked ? 'block' : 'none';
-  }
+function toggleTheme(){document.body.classList.toggle('dark');}
 </script>
-
 </body>
 </html>
