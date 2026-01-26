@@ -3,130 +3,191 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>حاسبة العلامات</title>
+  <title>Grade Calc</title>
+
   <style>
+    :root {
+      --blue: #2563eb;
+      --bg-light: #f1f5f9;
+      --card-light: #ffffff;
+      --bg-dark: #0f172a;
+      --card-dark: #020617;
+      --text-light: #020617;
+      --text-dark: #e5e7eb;
+      --fail: #fecaca;
+    }
+
     body {
       font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: #e5e7eb;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-    .card {
-      background: #fff;
+      background: var(--bg-dark);
+      color: var(--text-dark);
       padding: 20px;
-      border-radius: 12px;
-      width: 100%;
-      max-width: 400px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
-    h2 {
+
+    body.light {
+      background: var(--bg-light);
+      color: var(--text-light);
+    }
+
+    header {
+      position: relative;
       text-align: center;
       margin-bottom: 20px;
     }
+
+    header img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 70px;
+    }
+
+    h1 {
+      color: var(--blue);
+      margin-bottom: 10px;
+    }
+
+    .ayah {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
     button {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border: none;
-      border-radius: 8px;
-      background: #2563eb;
-      color: #fff;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    button.secondary {
-      background: #16a34a;
-    }
-    input {
-      width: 100%;
-      padding: 8px;
-      margin: 8px 0;
+      padding: 8px 14px;
       border-radius: 6px;
-      border: 1px solid #334155;
-      background: #020617;
-      color: #e5e7eb;
+      border: none;
+      background: var(--blue);
+      color: white;
+      cursor: pointer;
+      margin: 5px;
     }
-    .result {
-      margin-top: 15px;
-      font-weight: bold;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #94a3b8;
+      padding: 6px;
       text-align: center;
     }
-    .hidden {
-      display: none;
+
+    input {
+      width: 90%;
+      padding: 4px;
+    }
+
+    .fail {
+      background: var(--fail);
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .avg-box {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2>حاسبة العلامات</h2>
 
-    <button onclick="showOption(1)">هنعوض في الفاينل</button>
-    <button class="secondary" onclick="showOption(2)">توقع</button>
+<header>
+  <!-- ضع الصورة باسم logo.png داخل الريبو -->
+  <img src="logo.png" alt="Faculty Logo">
+  <h1>Grade Calc</h1>
+  <div class="ayah" id="ayah">{وَقُلْ رَبِّ زِدْنِي عِلْمًا}</div>
+  <label>
+    <input type="checkbox" checked onchange="toggleAyah(this)"> إظهار الآية
+  </label>
+</header>
 
-    <!-- Option 1 -->
-    <div id="option1" class="hidden">
-      <h3>هنعوض في الفاينل</h3>
-      <input type="number" id="partial" placeholder="علامة الميد (من 100)" />
-      <button onclick="calculateFinal()">احسب</button>
-      <div id="result1" class="result"></div>
-    </div>
+<div class="controls">
+  <button onclick="addRow()">➕ إضافة مادة</button>
+  <button onclick="toggleTheme()">🌙 / ☀️</button>
+</div>
 
-    <!-- Option 2 -->
-    <div id="option2" class="hidden">
-      <h3>توقع</h3>
-      <input type="number" id="low" placeholder="أقل علامة (40%)" />
-      <input type="number" id="high" placeholder="أعلى علامة (60%)" />
-      <button onclick="calculateExpectation()">احسب</button>
-      <div id="result2" class="result"></div>
-    </div>
-  </div>
+<table id="gradesTable">
+  <thead>
+    <tr>
+      <th>المادة</th>
+      <th>Credits</th>
+      <th>Partial</th>
+      <th>Final</th>
+      <th>Raise</th>
+      <th>Average</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
 
-  <script>
-    function showOption(option) {
-      document.getElementById('option1').classList.add('hidden');
-      document.getElementById('option2').classList.add('hidden');
-      document.getElementById('result1').innerText = '';
-      document.getElementById('result2').innerText = '';
-      document.getElementById('option' + option).classList.remove('hidden');
+<div class="avg-box" id="overall"></div>
+
+<script>
+  function addRow() {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td><input></td>
+      <td><input type="number"></td>
+      <td><input type="number" oninput="calculate()"></td>
+      <td><input type="number" oninput="calculate()"></td>
+      <td class="raise">0</td>
+      <td class="avg">0</td>
+    `;
+    document.querySelector('#gradesTable tbody').appendChild(row);
+  }
+
+  function calculate() {
+    let total = 0;
+    let creditsSum = 0;
+
+    document.querySelectorAll('#gradesTable tbody tr').forEach(row => {
+      const credits = Number(row.children[1].querySelector('input').value);
+      const p = Number(row.children[2].querySelector('input').value);
+      const f = Number(row.children[3].querySelector('input').value);
+
+      if (!credits || !p || !f) return;
+
+      const high = Math.max(p, f);
+      const low = Math.min(p, f);
+      let avg = high * 0.6 + low * 0.4;
+
+      let raise = 0;
+      if (avg < 66) raise = 66 - avg;
+
+      const finalAvg = avg + raise;
+
+      row.children[4].innerText = raise.toFixed(2);
+      row.children[5].innerText = finalAvg.toFixed(2);
+
+      row.classList.toggle('fail', finalAvg < 60);
+
+      total += finalAvg * credits;
+      creditsSum += credits;
+    });
+
+    if (creditsSum > 0) {
+      document.getElementById('overall').innerText =
+        `المعدل العام: ${(total / creditsSum).toFixed(2)}`;
     }
+  }
 
-    // Option 1: required final grade to pass (50)
-    function calculateFinal() {
-      const partial = Number(document.getElementById('partial').value);
-      const passGrade = 60;
+  function toggleTheme() {
+    document.body.classList.toggle('light');
+  }
 
-      if (partial < 0 || partial > 100) {
-        document.getElementById('result1').innerText = 'دخل علامة صحيحة';
-        return;
-      }
+  function toggleAyah(checkbox) {
+    document.getElementById('ayah').style.display = checkbox.checked ? 'block' : 'none';
+  }
+</script>
 
-      const neededFinal = (passGrade - (partial * 0.4)) / 0.6;
-
-      if (neededFinal > 100) {
-        document.getElementById('result1').innerText = 'للأسف، حتى الـ100 ما بتكفي';
-      } else if (neededFinal <= 0) {
-        document.getElementById('result1').innerText = 'ناجح حتى بدون فاينل 🎉';
-      } else {
-        document.getElementById('result1').innerText = `بدك ${neededFinal.toFixed(2)} بالفاينل لتنجح`;
-      }
-    }
-
-    // Option 2: expectation based on min/max
-    function calculateExpectation() {
-      const low = Number(document.getElementById('low').value);
-      const high = Number(document.getElementById('high').value);
-
-      if (low < 0 || high < 0 || low > 100 || high > 100) {
-        document.getElementById('result2').innerText = 'دخل علامات صحيحة';
-        return;
-      }
-
-      const expected = (low * 0.4) + (high * 0.6);
-      document.getElementById('result2').innerText = `توقعك النهائي: ${expected.toFixed(2)}`;
-    }
-  </script>
 </body>
 </html>
