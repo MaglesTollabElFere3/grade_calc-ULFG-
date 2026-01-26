@@ -136,7 +136,6 @@
           <th>Partial</th>
           <th>Final</th>
           <th>Average</th>
-          <th>Raise</th>
           <th>Action</th>
         </tr>
       </thead>
@@ -164,11 +163,7 @@
         <td><input class="partial" type="number" /></td>
         <td><input class="final" type="number" /></td>
         <td class="avg">—</td>
-        <td class="raise">—</td>
-        <td>
-          <button onclick="submitRow(this)">Submit</button>
-          <button onclick="addRaise(this)">Raise</button>
-        </td>
+        <td><button onclick="submitRow(this)">Submit</button></td>
       `;
       document.getElementById('tbody').appendChild(tr);
     }
@@ -198,23 +193,24 @@
       location.reload();
     }
 
-    function addRaise(btn) {
-      const row = btn.closest('tr');
-      const val = prompt('أدخل قيمة الـ Raise لهذه المادة فقط:');
+    function addRaise() {
+      const val = prompt('أدخل قيمة الـ Raise (تنضاف على معدل المادة فقط):');
       if (val === null) return;
-
       const raiseVal = parseFloat(val) || 0;
-      const gradeEl = row.querySelector('.final-grade');
-      if (!gradeEl) return;
 
-      const base = parseFloat(gradeEl.dataset.base);
-      if (isNaN(base)) return;
+      // نعيد حساب كل المواد بدون رايز ثم نضيف الجديد مرة وحدة
+      document.querySelectorAll('.subject-row').forEach(row => {
+        const avgCell = row.querySelector('.avg');
+        const gradeEl = row.querySelector('.final-grade');
+        if (!gradeEl) return;
 
-      const newGrade = base + raiseVal;
-      gradeEl.textContent = newGrade.toFixed(2);
-      gradeEl.classList.toggle('fail', newGrade < 60);
+        const base = parseFloat(gradeEl.dataset.base);
+        if (isNaN(base)) return;
 
-      row.querySelector('.raise').textContent = raiseVal.toFixed(2);
+        const newGrade = base + raiseVal;
+        gradeEl.textContent = newGrade.toFixed(2);
+        gradeEl.classList.toggle('fail', newGrade < 60);
+      });
 
       calculateOverallAverage();
     }
