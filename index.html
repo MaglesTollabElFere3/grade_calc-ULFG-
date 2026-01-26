@@ -4,214 +4,218 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Grade calc</title>
+
   <style>
-    :root{
-      --blue:#1e5aa8;
-      --bg-light:#f4f6f9;
-      --bg-dark:#0f172a;
-      --card-light:#ffffff;
-      --card-dark:#1e293b;
-      --text-light:#0f172a;
-      --text-dark:#e5e7eb;
-      --fail:#f8d7da;
+    :root {
+      --blue: #1e3a5f;
+      --blue-light: #2f5fa3;
+      --bg: #0b1220;
+      --card: #111a2e;
+      --text: #ffffff;
     }
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, sans-serif;
-      background:var(--bg-light);
-      color:var(--text-light);
-      transition:0.3s;
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
     }
-    body.dark{
-      background:var(--bg-dark);
-      color:var(--text-dark);
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 20px;
+      background: var(--blue);
     }
-    header{
-      background:var(--blue);
-      color:white;
-      padding:15px;
-      position:relative;
-      text-align:center;
+
+    header img {
+      position: absolute;
+      left: 20px;
+      width: 70px;
     }
-    header img{
-      position:absolute;
-      top:10px;
-      right:10px;
-      width:70px;
+
+    header h1 {
+      font-size: 26px;
+      margin: 0;
     }
-    .ayah{
-      font-size:26px;
-      margin-top:5px;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
     }
-    .container{
-      padding:20px;
-      max-width:1000px;
-      margin:auto;
+
+    th, td {
+      border: 1px solid #2a3d5c;
+      padding: 10px;
+      text-align: center;
     }
-    .controls{
-      display:flex;
-      gap:15px;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:15px;
+
+    th {
+      background: #223a5e;
     }
-    table{
-      width:100%;
-      border-collapse:collapse;
+
+    input {
+      width: 80px;
+      padding: 5px;
+      text-align: center;
     }
-    th,td{
-      border:1px solid #ccc;
-      padding:8px;
-      text-align:center;
+
+    button {
+      padding: 6px 12px;
+      background: var(--blue-light);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
     }
-    body.dark th, body.dark td{border-color:#334155;}
-    th{background:#e8eef8;}
-    body.dark th{background:#24344d;}
-    tr.fail{background:var(--fail);}
-    button{
-      padding:6px 10px;
-      cursor:pointer;
+
+    .fail-grade {
+      color: #c0392b;
+      font-weight: 600;
     }
-    .add{
-      background:var(--blue);
-      color:white;
-      border:none;
+
+    .avg-box {
+      font-size: 20px;
+      font-weight: bold;
     }
-    .theme{
-      cursor:pointer;
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
     }
-    .modal{
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,0.6);
-      display:none;
-      align-items:center;
-      justify-content:center;
+
+    .modal-content {
+      background: white;
+      color: black;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
     }
-    .modal-content{
-      background:white;
-      padding:20px;
-      width:300px;
-    }
-    body.dark .modal-content{background:var(--card-dark);}
-    .modal-content input{
-      width:100%;
-      margin:5px 0;
-      padding:6px;
-    }
-    .avg-box{
-      font-weight:bold;
+
+    .modal-content input {
+      margin: 5px;
     }
   </style>
 </head>
+
 <body>
+
 <header>
   <img src="logo.png" alt="logo" />
   <h1>Grade calc</h1>
-  <div class="ayah" id="ayah">{وَقُلْ رَبِّ زِدْنِي عِلْمًا}</div>
 </header>
 
-<div class="container">
-  <div class="controls">
-    <button class="add" onclick="addRow()">➕ إضافة مادة</button>
-    <label class="theme">
-      🌙 <input type="checkbox" onchange="toggleTheme()" />
-    </label>
-  </div>
+<table id="gradesTable">
+  <thead>
+    <tr>
+      <th>المادة</th>
+      <th>Credits</th>
+      <th>Partial</th>
+      <th>Final</th>
+      <th>Raise</th>
+      <th>Average</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
 
-  <table id="table">
-    <thead>
-      <tr>
-        <th>المادة</th>
-        <th>Credits</th>
-        <th>Partial</th>
-        <th>Final</th>
-        <th>Average</th>
-        <th>Raise</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+<br />
+<button onclick="addRow()">إضافة مادة</button>
 
-  <h3 id="gpa">المعدل العام: --</h3>
-</div>
-
-<div class="modal" id="modal">
+<div class="modal" id="raiseModal">
   <div class="modal-content">
     <h3>معدل الدفعة</h3>
-    <input id="mp" type="number" placeholder="Partial avg" />
-    <input id="mf" type="number" placeholder="Final avg" />
+    <input id="classPartial" placeholder="Partial" type="number" />
+    <input id="classFinal" placeholder="Final" type="number" />
+    <br /><br />
     <button onclick="applyRaise()">OK</button>
   </div>
 </div>
 
 <script>
-let currentRow=null;
+let currentRow = null;
 
-function addRow(){
-  const tr=document.createElement('tr');
-  tr.innerHTML=`
+function addRow() {
+  const row = document.createElement('tr');
+  row.innerHTML = `
     <td><input></td>
     <td><input type="number"></td>
-    <td><input type="number" oninput="calc(this)"></td>
-    <td><input type="number" oninput="calc(this)"></td>
-    <td class="avg-box">--</td>
-    <td><button onclick="openRaise(this)">Raise</button></td>
+    <td><input type="number"></td>
+    <td><input type="number"></td>
+    <td><span>0</span></td>
+    <td class="avg-box">0</td>
+    <td>
+      <button onclick="submitRow(this)">Submit</button>
+      <button onclick="openRaise(this)">Raise</button>
+    </td>
   `;
-  document.querySelector('tbody').appendChild(tr);
+  document.querySelector('#gradesTable tbody').appendChild(row);
 }
 
-function calc(el){
-  const tr=el.closest('tr');
-  const p=+tr.children[2].firstChild.value||0;
-  const f=+tr.children[3].firstChild.value||0;
-  const high=Math.max(p,f);
-  const low=Math.min(p,f);
-  let avg=high*0.6+low*0.4;
-  tr.children[4].textContent=avg.toFixed(2);
-  tr.classList.toggle('fail',avg<60);
-  calcGPA();
-}
+function submitRow(btn) {
+  const row = btn.closest('tr');
+  const inputs = row.querySelectorAll('input');
 
-function openRaise(btn){
-  currentRow=btn.closest('tr');
-  modal.style.display='flex';
-}
+  const p = Number(inputs[2].value);
+  const f = Number(inputs[3].value);
 
-function applyRaise(){
-  const mp=+document.getElementById('mp').value;
-  const mf=+document.getElementById('mf').value;
-  const high=Math.max(mp,mf);
-  const low=Math.min(mp,mf);
-  const classAvg=high*0.6+low*0.4;
-  if(classAvg<66){
-    const raise=66-classAvg;
-    let avg=parseFloat(currentRow.children[4].textContent);
-    avg=Math.min(100,avg+raise);
-    currentRow.children[4].textContent=avg.toFixed(2);
-    currentRow.classList.toggle('fail',avg<60);
+  const high = Math.max(p, f);
+  const low = Math.min(p, f);
+
+  const baseAvg = high * 0.6 + low * 0.4;
+
+  row.dataset.base = baseAvg;
+  row.dataset.raise = row.dataset.raise || 0;
+
+  const finalAvg = baseAvg + Number(row.dataset.raise);
+  const avgCell = row.querySelector('.avg-box');
+  avgCell.textContent = finalAvg.toFixed(2);
+
+  if (finalAvg < 60) {
+    avgCell.classList.add('fail-grade');
+  } else {
+    avgCell.classList.remove('fail-grade');
   }
-  modal.style.display='none';
-  document.getElementById('mp').value='';
-  document.getElementById('mf').value='';
-  calcGPA();
 }
 
-function calcGPA(){
-  let sum=0,credits=0;
-  document.querySelectorAll('tbody tr').forEach(tr=>{
-    const c=+tr.children[1].firstChild.value||0;
-    const a=parseFloat(tr.children[4].textContent);
-    if(!isNaN(a)){
-      sum+=a*c;
-      credits+=c;
-    }
-  });
-  document.getElementById('gpa').textContent=
-    credits?`المعدل العام: ${(sum/credits).toFixed(2)}`:'المعدل العام: --';
+function openRaise(btn) {
+  currentRow = btn.closest('tr');
+  document.getElementById('raiseModal').style.display = 'flex';
 }
 
-function toggleTheme(){document.body.classList.toggle('dark');}
+function applyRaise() {
+  const cp = Number(document.getElementById('classPartial').value);
+  const cf = Number(document.getElementById('classFinal').value);
+
+  const high = Math.max(cp, cf);
+  const low = Math.min(cp, cf);
+
+  const classAvg = high * 0.6 + low * 0.4;
+  let raise = 0;
+
+  if (classAvg < 66) {
+    raise = 66 - classAvg;
+  }
+
+  currentRow.dataset.raise = raise;
+  currentRow.querySelector('td:nth-child(5) span').textContent = raise.toFixed(2);
+
+  submitRow(currentRow.querySelector('button'));
+
+  document.getElementById('raiseModal').style.display = 'none';
+}
 </script>
+
 </body>
 </html>
