@@ -178,9 +178,9 @@
 
       const high = Math.max(p, f);
       const low = Math.min(p, f);
-      const avg = high * 0.6 + low * 0.4; // المعدل بدون رايز
+      const avg = high * 0.6 + low * 0.4;
 
-      row.querySelector('.avg').innerHTML = `<span class="final-grade ${avg < 60 ? 'fail' : ''}" data-base="${avg}">${avg.toFixed(2)}</span>`;
+      row.querySelector('.avg').innerHTML = `<span class="final-grade ${avg < 60 ? 'fail' : ''}">${avg.toFixed(2)}</span>`;
       row.querySelector('.credit').outerHTML = `<span class="credit-value printed">${credit}</span>`;
 
       row.querySelectorAll('input').forEach(i => i.outerHTML = `<span class="printed">${i.value}</span>`);
@@ -194,24 +194,9 @@
     }
 
     function addRaise() {
-      const val = prompt('أدخل قيمة الـ Raise (تنضاف على معدل المادة فقط):');
+      const val = prompt('أدخل قيمة الـ Raise:');
       if (val === null) return;
-      const raiseVal = parseFloat(val) || 0;
-
-      // نعيد حساب كل المواد بدون رايز ثم نضيف الجديد مرة وحدة
-      document.querySelectorAll('.subject-row').forEach(row => {
-        const avgCell = row.querySelector('.avg');
-        const gradeEl = row.querySelector('.final-grade');
-        if (!gradeEl) return;
-
-        const base = parseFloat(gradeEl.dataset.base);
-        if (isNaN(base)) return;
-
-        const newGrade = base + raiseVal;
-        gradeEl.textContent = newGrade.toFixed(2);
-        gradeEl.classList.toggle('fail', newGrade < 60);
-      });
-
+      currentRaise = parseFloat(val) || 0;
       calculateOverallAverage();
     }
 
@@ -224,23 +209,11 @@
         const c = row.querySelector('.credit-value');
         if (!g || !c) return;
 
-        const grade = parseFloat(g.textContent); // العلامة بعد الرايز
+        const grade = parseFloat(g.textContent);
         const credit = parseFloat(c.textContent);
-
-        if (!isNaN(grade) && !isNaN(credit)) {
-          sum += grade * credit;
-          credits += credit;
-        }
+        sum += grade * credit;
+        credits += credit;
       });
-
-      if (credits === 0) {
-        overallAvg.textContent = '—';
-        return;
-      }
-
-      const result = sum / credits;
-      overallAvg.textContent = result.toFixed(2);
-    });
 
       if (credits === 0) {
         overallAvg.textContent = '—';
