@@ -31,35 +31,16 @@
     header {
       padding: 16px;
       text-align: center;
-      position: relative;
     }
 
-    h1 {
-      margin: 8px 0;
-      color: var(--blue);
-    }
+    h1 { color: var(--blue); margin: 8px 0; }
 
-    .ayah {
-      font-size: 1.4rem;
-      margin-bottom: 10px;
-    }
+    .ayah { font-size: 1.5rem; margin-bottom: 10px; }
 
-    .container {
-      padding: 16px;
-      max-width: 1000px;
-      margin: auto;
-    }
-
-    .controls {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-    }
+    .container { padding: 16px; max-width: 1000px; margin: auto; }
 
     button {
-      padding: 10px 16px;
+      padding: 8px 14px;
       border: none;
       border-radius: 10px;
       background: var(--blue);
@@ -68,192 +49,137 @@
       cursor: pointer;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 8px; text-align: center; }
+    thead { background: rgba(37,99,235,0.1); }
 
-    th, td {
-      padding: 10px;
-      text-align: center;
-    }
-
-    thead {
-      background: rgba(37, 99, 235, 0.1);
-    }
-
-    tr.card {
-      background: var(--card-light);
-      border-radius: 14px;
-    }
-
-    body.dark tr.card {
-      background: var(--card-dark);
-    }
+    tr.card { background: var(--card-light); }
+    body.dark tr.card { background: var(--card-dark); }
 
     input {
-      width: 80px;
-      padding: 6px;
+      width: 70px;
+      padding: 5px;
       text-align: center;
       border-radius: 6px;
       border: 1px solid #ccc;
     }
 
-    .printed {
-      font-weight: bold;
-    }
-
-    .fail {
-      color: var(--fail);
-      font-weight: bold;
-    }
+    .printed { font-weight: bold; }
+    .fail { color: var(--fail); font-weight: bold; }
 
     .overall {
       margin-top: 20px;
-      font-size: 1.3rem;
+      font-size: 1.4rem;
       text-align: center;
+      color: var(--blue);
     }
   </style>
 </head>
 <body>
-  <header>
-    <div class="ayah">{وَقُلْ رَبِّ زِدْنِي عِلْمًا}</div>
-    <h1>Grade Calc</h1>
-    <button onclick="toggleTheme()">🌙 / ☀️</button>
-  </header>
 
-  <div class="container">
-    <div class="controls">
-      <button onclick="addRow()">➕ إضافة مادة</button>
-      <button onclick="addRaise()">⬆️ Raise</button>
-    </div>
+<header>
+  <div class="ayah">{وَقُلْ رَبِّ زِدْنِي عِلْمًا}</div>
+  <h1>Grade Calc</h1>
+  <button onclick="toggleTheme()">🌙 / ☀️</button>
+</header>
 
-    <table>
-      <thead>
-        <tr>
-          <th>المادة</th>
-          <th>Credits</th>
-          <th>Partial</th>
-          <th>Final</th>
-          <th>Average</th>
-          <th>Raise</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody id="tbody"></tbody>
-    </table>
+<div class="container">
+  <button onclick="addRow()">➕ إضافة مادة</button>
 
-    <div class="overall">
-      المعدل العام: <span id="overallAvg">—</span>
-    </div>
+  <table>
+    <thead>
+      <tr>
+        <th>المادة</th>
+        <th>Credits</th>
+        <th>Partial</th>
+        <th>Final</th>
+        <th>Average</th>
+        <th>Raise</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+
+  <div class="overall">
+    المعدل العام للطالب: <span id="overallAvg">—</span>
   </div>
+</div>
 
-  <script>
-    let currentRaise = 0;
+<script>
+  function toggleTheme() {
+    document.body.classList.toggle('dark');
+  }
 
-    function toggleTheme() {
-      document.body.classList.toggle('dark');
-    }
+  function addRow() {
+    const tr = document.createElement('tr');
+    tr.className = 'card subject-row';
+    tr.innerHTML = `
+      <td><input placeholder="اسم" /></td>
+      <td><input class="credit" type="number" /></td>
+      <td><input class="partial" type="number" /></td>
+      <td><input class="final" type="number" /></td>
+      <td class="avg">—</td>
+      <td class="raise">—</td>
+      <td>
+        <button onclick="submitRow(this)">Submit</button>
+        <button onclick="raiseRow(this)">Raise</button>
+      </td>`;
+    document.getElementById('tbody').appendChild(tr);
+  }
 
-    function addRow() {
-      const tr = document.createElement('tr');
-      tr.className = 'card subject-row';
-      tr.innerHTML = `
-        <td><input placeholder="اسم" /></td>
-        <td><input class="credit" type="number" /></td>
-        <td><input class="partial" type="number" /></td>
-        <td><input class="final" type="number" /></td>
-        <td class="avg">—</td>
-        <td class="raise">—</td>
-        <td>
-          <button onclick="submitRow(this)">Submit</button>
-          <button onclick="addRaise(this)">Raise</button>
-        </td>
-      `;
-      document.getElementById('tbody').appendChild(tr);
-    }
+  function submitRow(btn) {
+    const row = btn.closest('tr');
+    const credit = parseFloat(row.querySelector('.credit').value);
+    const p = parseFloat(row.querySelector('.partial').value);
+    const f = parseFloat(row.querySelector('.final').value);
+    if ([credit,p,f].some(isNaN)) return;
 
-    function submitRow(btn) {
-      const row = btn.closest('tr');
-      const credit = parseFloat(row.querySelector('.credit').value);
-      const p = parseFloat(row.querySelector('.partial').value);
-      const f = parseFloat(row.querySelector('.final').value);
+    const base = Math.max(p,f)*0.6 + Math.min(p,f)*0.4;
 
-      if (isNaN(credit) || isNaN(p) || isNaN(f)) return;
+    row.querySelector('.avg').innerHTML = `<span class="final-grade ${base<60?'fail':''}" data-base="${base}">${base.toFixed(2)}</span>`;
+    row.querySelector('.raise').textContent = '0.00';
 
-      const high = Math.max(p, f);
-      const low = Math.min(p, f);
-      const avg = high * 0.6 + low * 0.4; // المعدل بدون رايز
-
-      row.querySelector('.avg').innerHTML = `<span class="final-grade ${avg < 60 ? 'fail' : ''}" data-base="${avg}">${avg.toFixed(2)}</span>`;
-      row.querySelector('.credit').outerHTML = `<span class="credit-value printed">${credit}</span>`;
-
-      row.querySelectorAll('input').forEach(i => i.outerHTML = `<span class="printed">${i.value}</span>`);
-      btn.outerHTML = `<button onclick="editRow(this)">Edit</button>`;
-
-      calculateOverallAverage();
-    }
-
-    function editRow(btn) {
-      location.reload();
-    }
-
-    function addRaise(btn) {
-      const row = btn.closest('tr');
-      const val = prompt('أدخل قيمة الـ Raise لهذه المادة فقط:');
-      if (val === null) return;
-
-      const raiseVal = parseFloat(val) || 0;
-      const gradeEl = row.querySelector('.final-grade');
-      if (!gradeEl) return;
-
-      const base = parseFloat(gradeEl.dataset.base);
-      if (isNaN(base)) return;
-
-      const newGrade = base + raiseVal;
-      gradeEl.textContent = newGrade.toFixed(2);
-      gradeEl.classList.toggle('fail', newGrade < 60);
-
-      row.querySelector('.raise').textContent = raiseVal.toFixed(2);
-
-      calculateOverallAverage();
-    }
-
-    function calculateOverallAverage() {
-      let sum = 0;
-      let credits = 0;
-
-      document.querySelectorAll('.subject-row').forEach(row => {
-        const g = row.querySelector('.final-grade');
-        const c = row.querySelector('.credit-value');
-        if (!g || !c) return;
-
-        const grade = parseFloat(g.textContent); // العلامة بعد الرايز
-        const credit = parseFloat(c.textContent);
-
-        if (!isNaN(grade) && !isNaN(credit)) {
-          sum += grade * credit;
-          credits += credit;
-        }
-      });
-
-      if (credits === 0) {
-        overallAvg.textContent = '—';
-        return;
-      }
-
-      const result = sum / credits;
-      overallAvg.textContent = result.toFixed(2);
+    row.querySelectorAll('input').forEach(i=>{
+      i.outerHTML = `<span class="printed">${i.value}</span>`;
     });
 
-      if (credits === 0) {
-        overallAvg.textContent = '—';
-        return;
-      }
+    btn.outerHTML = `<button onclick="location.reload()">Edit</button>`;
+    calculateOverall();
+  }
 
-      let result = sum / credits + currentRaise;
-      overallAvg.textContent = result.toFixed(2);
-    }
-  </script>
+  function raiseRow(btn) {
+    const row = btn.closest('tr');
+    const gradeEl = row.querySelector('.final-grade');
+    if (!gradeEl) return;
+
+    const val = prompt('أدخل قيمة الرايز لهذه المادة فقط:');
+    if (val === null) return;
+
+    const raise = parseFloat(val) || 0;
+    const base = parseFloat(gradeEl.dataset.base);
+    const newGrade = base + raise;
+
+    gradeEl.textContent = newGrade.toFixed(2);
+    gradeEl.classList.toggle('fail', newGrade < 60);
+    row.querySelector('.raise').textContent = raise.toFixed(2);
+
+    calculateOverall();
+  }
+
+  function calculateOverall() {
+    let sum = 0, credits = 0;
+    document.querySelectorAll('.subject-row').forEach(row=>{
+      const g = row.querySelector('.final-grade');
+      const c = row.querySelector('.printed:nth-child(2)');
+      if (!g || !c) return;
+      const grade = parseFloat(g.textContent);
+      const credit = parseFloat(c.textContent);
+      sum += grade * credit;
+      credits += credit;
+    });
+    document.getElementById('overallAvg').textContent = credits ? (sum/credits).toFixed(2) : '—';
+  }
+</script>
 </body>
 </html>
