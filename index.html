@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grade Calc - كلية الهندسة</title>
+    
+    <link rel="icon" type="image/png" href="logo.png">
+
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
     <style>
@@ -384,10 +387,6 @@
         let currentRaiseRow = null; // لتخزين الصف الذي يتم تعديله حالياً
 
         function openRaiseModal(btn) {
-            // التحقق من أن الصف ليس في وضع القراءة فقط (تم عمل submit له)
-            // إذا كنت تريد السماح بتعديل الـ raise فقط أثناء وضع الـ Edit، اتركها كما هي.
-            // هنا نسمح بفتح النافذة دائماً وتعديل القيمة.
-            
             const row = btn.closest('tr');
             currentRaiseRow = row;
             
