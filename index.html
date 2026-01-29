@@ -6,32 +6,31 @@
     <title>Grade Calc - كلية الهندسة</title>
     
     <link rel="icon" type="image/png" href="logo.png">
-
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
     <style>
         /* تعريف الألوان والمتغيرات للـ Themes */
         :root {
-            --primary-blue: #1e3a5f; /* أزرق داكن للهيدر */
-            --accent-blue: #3b82f6; /* أزرق للأزرار */
+            --primary-blue: #1e3a5f;
+            --accent-blue: #3b82f6;
             --bg-color: #f4f6f8;
             --text-color: #333;
             --table-bg: #ffffff;
             --table-header-bg: #1e2a3b;
             --table-header-text: #ffffff;
             --border-color: #ddd;
-            --fail-color: #d32f2f; /* أحمر للرسوب */
+            --fail-color: #d32f2f;
             --input-bg: #fff;
         }
 
         /* خصائص الـ Dark Theme */
         [data-theme="dark"] {
-            --bg-color: #0f172a; /* خلفية الصفحة */
+            --bg-color: #0f172a;
             --text-color: #e2e8f0;
-            --table-bg: #1e293b; /* خلفية الجدول */
+            --table-bg: #1e293b;
             --table-header-bg: #0f172a;
             --border-color: #334155;
-            --fail-color: #ff6b6b; /* أحمر فاتح مائل للداكن للرسوب في الخلفية السوداء */
+            --fail-color: #ff6b6b;
             --input-bg: #334155;
         }
 
@@ -46,7 +45,7 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             transition: background-color 0.3s, color 0.3s;
-            direction: ltr; /* التوجيه العام يسار ليمين */
+            direction: ltr;
         }
 
         /* --- Header Styling --- */
@@ -67,7 +66,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: white; /* دائرة بيضاء خلف اللوغو لتوضيحه */
+            background: white;
             border-radius: 50%;
             overflow: hidden;
             border: 2px solid white;
@@ -91,7 +90,7 @@
 
         .verse {
             font-family: 'Amiri', serif;
-            font-size: 1.8rem; /* أكبر من السابق وأصغر من العنوان */
+            font-size: 1.8rem;
             margin-top: 5px;
             opacity: 0.9;
         }
@@ -121,7 +120,9 @@
 
         .controls {
             display: flex;
+            flex-wrap: wrap;
             justify-content: flex-end;
+            gap: 10px;
             margin-bottom: 15px;
         }
 
@@ -151,6 +152,13 @@
             background-color: #f59e0b; /* Amber */
             padding: 6px 12px;
             font-size: 0.9rem;
+        }
+
+        .btn-remove {
+            background-color: #ef4444; /* Red */
+            padding: 6px 10px;
+            font-size: 0.9rem;
+            margin-left: 5px;
         }
 
         .btn-raise {
@@ -280,10 +288,13 @@
             .header-content h1 { font-size: 1.8rem; }
             .verse { font-size: 1.2rem; }
             .theme-toggle { margin-top: 10px; }
+            .controls { justify-content: center; }
         }
     </style>
 </head>
-<body data-theme="dark"> <header>
+<body data-theme="dark">
+
+    <header>
         <div class="logo-container">
             <img src="logo.png" alt="Engineering Logo">
         </div>
@@ -299,14 +310,16 @@
     <div class="container">
         
         <div class="controls">
-            <button class="btn btn-add" onclick="addSubjectRow()">+ Add Material</button>
+            <button class="btn btn-add" onclick="addSubjectRow()">+ Material</button>
+            <button class="btn btn-add" onclick="addSemester(3)">+ Add Sem 3</button>
+            <button class="btn btn-add" onclick="addSemester(4)">+ Add Sem 4</button>
         </div>
 
         <div class="table-container">
             <table id="gradesTable">
                 <thead>
                     <tr>
-                        <th style="width: 120px;">Action</th>
+                        <th style="width: 140px;">Action</th>
                         <th>Average</th>
                         <th>Raise</th>
                         <th>Final</th>
@@ -341,6 +354,35 @@
     </div>
 
     <script>
+        // --- بيانات الفصول (للتعبئة التلقائية) ---
+        const semester3 = [
+            { name: "Differential Geometry", credit: 3 },
+            { name: "Analysis III", credit: 5 },
+            { name: "Computer Science III", credit: 3 },
+            { name: "Mechanics II", credit: 4 },
+            { name: "Mineral Chemistry", credit: 2 },
+            { name: "Electricity II", credit: 3 },
+            { name: "Probability", credit: 3 },
+            { name: "Engineering Profession", credit: 1 },
+            { name: "Foreign Language", credit: 3 },
+            { name: "Industrial Drawing", credit: 1 },
+            { name: "Laboratory III", credit: 2 }
+        ];
+
+        const semester4 = [
+            { name: "Analysis IV", credit: 4 },
+            { name: "Numerical Methods", credit: 3 },
+            { name: "Modern Physics", credit: 3 },
+            { name: "Statistics", credit: 3 },
+            { name: "Electricity III", credit: 3 },
+            { name: "Oral Communication", credit: 1 },
+            { name: "Organic Chemistry", credit: 2 },
+            { name: "Mechanics of Materials", credit: 3 },
+            { name: "Thermodynamics", credit: 3 },
+            { name: "Computer Science IV", credit: 2 },
+            { name: "Laboratory IV (Matlab, DAO)", credit: 3 }
+        ];
+
         // --- 1. Theme Toggling ---
         function toggleTheme() {
             const body = document.body;
@@ -358,15 +400,29 @@
             }
         }
 
-        // --- 2. Add Subject Row ---
-        // نقوم بإضافة صف جديد للجدول يحتوي على حقول إدخال
-        function addSubjectRow() {
+        // --- 2. Add Subject Logic ---
+        
+        // دالة لإضافة فصل كامل دفعة واحدة
+        function addSemester(semNumber) {
+            let courses = [];
+            if (semNumber === 3) courses = semester3;
+            else if (semNumber === 4) courses = semester4;
+
+            courses.forEach(course => {
+                addSubjectRow(course.name, course.credit);
+            });
+        }
+
+        // دالة إضافة صف (تقبل بيانات اختيارية للمادة والكريدت)
+        function addSubjectRow(name = '', credit = '') {
             const tableBody = document.querySelector('#gradesTable tbody');
             const row = document.createElement('tr');
             
+            // قمنا بإضافة زر الحذف (X) بجانب زر Submit
             row.innerHTML = `
                 <td>
                     <button class="btn btn-submit" onclick="submitRow(this)">Submit</button>
+                    <button class="btn btn-remove" onclick="removeRow(this)">X</button>
                 </td>
                 <td class="avg-cell">-</td>
                 <td>
@@ -377,23 +433,27 @@
                 </td>
                 <td><input type="number" class="final-input" placeholder="0-100"></td>
                 <td><input type="number" class="partial-input" placeholder="0-100"></td>
-                <td><input type="number" class="credits-input" placeholder="Cr"></td>
-                <td><input type="text" class="name-input" placeholder="Subject Name"></td>
+                <td><input type="number" class="credits-input" placeholder="Cr" value="${credit}"></td>
+                <td><input type="text" class="name-input" placeholder="Subject Name" value="${name}"></td>
             `;
             tableBody.appendChild(row);
         }
 
+        // دالة لحذف صف
+        function removeRow(btn) {
+            const row = btn.closest('tr');
+            row.remove(); // حذف العنصر من الصفحة
+            calculateTotalGPA(); // إعادة حساب المعدل فوراً
+        }
+
         // --- 3. Raise Calculation Logic ---
-        let currentRaiseRow = null; // لتخزين الصف الذي يتم تعديله حالياً
+        let currentRaiseRow = null; 
 
         function openRaiseModal(btn) {
             const row = btn.closest('tr');
             currentRaiseRow = row;
-            
-            // تصفير الحقول
             document.getElementById('classPartial').value = '';
             document.getElementById('classFinal').value = '';
-            
             document.getElementById('raiseModal').style.display = 'block';
         }
 
@@ -408,7 +468,6 @@
             const cp = parseFloat(document.getElementById('classPartial').value) || 0;
             const cf = parseFloat(document.getElementById('classFinal').value) || 0;
 
-            // حساب معدل الصف: 60% للأعلى + 40% للأدنى
             const maxVal = Math.max(cp, cf);
             const minVal = Math.min(cp, cf);
             const classAvg = (maxVal * 0.6) + (minVal * 0.4);
@@ -418,16 +477,12 @@
                 raiseAmount = 66 - classAvg;
             }
 
-            // تقريب الـ raise لمنزلتين عشريتين
             raiseAmount = parseFloat(raiseAmount.toFixed(2));
-
-            // وضع القيمة في خانة الـ raise في الجدول
             currentRaiseRow.querySelector('.raise-value').textContent = raiseAmount;
 
             closeModal();
         }
 
-        // إغلاق المودال عند الضغط خارجه
         window.onclick = function(event) {
             const modal = document.getElementById('raiseModal');
             if (event.target == modal) {
@@ -439,7 +494,6 @@
         function submitRow(btn) {
             const row = btn.closest('tr');
             const inputs = row.querySelectorAll('input');
-            const actionCell = row.cells[0];
 
             // جلب القيم
             const finalInput = row.querySelector('.final-input');
@@ -452,40 +506,31 @@
             const p = parseFloat(partialInput.value);
             const raise = parseFloat(raiseSpan.textContent);
 
-            // التحقق من صحة المدخلات الأساسية
             if (isNaN(f) || isNaN(p) || isNaN(parseFloat(creditsInput.value))) {
                 alert("Please fill in all grades and credits correctly.");
                 return;
             }
 
-            // حساب معدل المادة الأساسي
-            // القاعدة: 60% للعلامة الأعلى، 40% للعلامة الأدنى
+            // حساب المعدل
             const maxGrade = Math.max(f, p);
             const minGrade = Math.min(f, p);
             let baseAvg = (maxGrade * 0.6) + (minGrade * 0.4);
-
-            // إضافة الـ Raise
             let finalAvg = baseAvg + raise;
 
-            // عرض المعدل
             avgCell.textContent = finalAvg.toFixed(2);
 
-            // التلوين الشرطي (أحمر إذا أقل من 60)
             if (finalAvg < 60) {
                 avgCell.classList.add('failing');
             } else {
                 avgCell.classList.remove('failing');
             }
 
-            // قفل الحقول (تعطيلها)
             inputs.forEach(input => input.disabled = true);
             
-            // تغيير الزر إلى Edit
             btn.textContent = 'Edit';
             btn.className = 'btn btn-edit';
             btn.onclick = function() { editRow(this) };
 
-            // تحديث المعدل التراكمي العام
             calculateTotalGPA();
         }
 
@@ -493,10 +538,8 @@
             const row = btn.closest('tr');
             const inputs = row.querySelectorAll('input');
             
-            // تفعيل الحقول
             inputs.forEach(input => input.disabled = false);
 
-            // تغيير الزر إلى Submit
             btn.textContent = 'Submit';
             btn.className = 'btn btn-submit';
             btn.onclick = function() { submitRow(this) };
@@ -509,9 +552,6 @@
             let totalCredits = 0;
 
             rows.forEach(row => {
-                // نأخذ القيم فقط من الصفوف التي تم عمل Submit لها (الحقول معطلة)
-                // أو نأخذ القيم الموجودة حالياً إذا كانت الأرقام صحيحة
-                
                 const avgText = row.querySelector('.avg-cell').textContent;
                 const creditsVal = row.querySelector('.credits-input').value;
 
@@ -532,7 +572,6 @@
                 const gpa = totalWeightedScore / totalCredits;
                 gpaSpan.textContent = gpa.toFixed(2);
                 
-                // تلوين الـ GPA
                 if (gpa < 60) {
                     gpaSpan.classList.add('failing');
                 } else {
@@ -543,12 +582,9 @@
                 gpaSpan.classList.remove('failing');
             }
         }
-
-        // إضافة صف تلقائي عند التحميل
-        window.onload = function() {
-            addSubjectRow();
-        }
-
+        
+        // عند التحميل، لا نضيف أي مادة، نترك المستخدم يختار
+        // window.onload = function() { addSubjectRow(); } 
     </script>
 </body>
 </html>
