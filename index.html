@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
     <style>
-        /* تعريف الألوان والمتغيرات للـ Themes */
+        /* تعريف الألوان والمتغيرات */
         :root {
             --primary-blue: #1e3a5f;
             --accent-blue: #3b82f6;
@@ -23,7 +23,6 @@
             --input-bg: #fff;
         }
 
-        /* خصائص الـ Dark Theme */
         [data-theme="dark"] {
             --bg-color: #0f172a;
             --text-color: #e2e8f0;
@@ -57,7 +56,6 @@
             align-items: center;
             justify-content: space-between;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            position: relative;
         }
 
         .logo-container {
@@ -72,28 +70,11 @@
             border: 2px solid white;
         }
 
-        .logo-container img {
-            width: 100%;
-            height: auto;
-        }
+        .logo-container img { width: 100%; height: auto; }
 
-        .header-content {
-            text-align: center;
-            flex-grow: 1;
-        }
-
-        .header-content h1 {
-            font-size: 2.5rem;
-            margin-bottom: 5px;
-            font-weight: 700;
-        }
-
-        .verse {
-            font-family: 'Amiri', serif;
-            font-size: 1.8rem;
-            margin-top: 5px;
-            opacity: 0.9;
-        }
+        .header-content { text-align: center; flex-grow: 1; }
+        .header-content h1 { font-size: 2.5rem; margin-bottom: 5px; font-weight: 700; }
+        .verse { font-family: 'Amiri', serif; font-size: 1.8rem; margin-top: 5px; opacity: 0.9; }
 
         .theme-toggle {
             background: none;
@@ -105,68 +86,20 @@
             font-weight: bold;
             transition: 0.3s;
         }
-
-        .theme-toggle:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: white;
-        }
+        .theme-toggle:hover { background: rgba(255, 255, 255, 0.1); border-color: white; }
 
         /* --- Main Content --- */
-        .container {
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 0 15px;
-        }
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 15px; }
 
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
+        .controls { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; margin-bottom: 15px; }
 
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s;
-            color: white;
-        }
-
-        .btn-add {
-            background-color: var(--accent-blue);
-        }
-
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.2s; color: white; }
+        .btn-add { background-color: var(--accent-blue); }
         .btn-add:hover { background-color: #2563eb; }
-
-        .btn-submit {
-            background-color: #10b981; /* Green */
-            padding: 6px 12px;
-            font-size: 0.9rem;
-        }
-        
-        .btn-edit {
-            background-color: #f59e0b; /* Amber */
-            padding: 6px 12px;
-            font-size: 0.9rem;
-        }
-
-        .btn-remove {
-            background-color: #ef4444; /* Red */
-            padding: 6px 10px;
-            font-size: 0.9rem;
-            margin-left: 5px;
-        }
-
-        .btn-raise {
-            background-color: var(--accent-blue);
-            font-size: 0.8rem;
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
+        .btn-submit { background-color: #10b981; padding: 8px 14px; font-size: 0.95rem; }
+        .btn-edit { background-color: #f59e0b; padding: 8px 14px; font-size: 0.95rem; }
+        .btn-remove { background-color: #ef4444; padding: 8px 12px; font-size: 0.95rem; margin-left: 5px; }
+        .btn-raise { background-color: var(--accent-blue); font-size: 0.9rem; padding: 6px 10px; border-radius: 4px; }
 
         /* --- Table Styling --- */
         .table-container {
@@ -175,52 +108,59 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: var(--table-bg);
-            text-align: center;
-        }
+        table { width: 100%; border-collapse: collapse; background-color: var(--table-bg); text-align: center; }
+        thead { background-color: var(--table-header-bg); color: var(--table-header-text); }
+        th, td { padding: 12px 10px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        th { text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px; }
 
-        thead {
-            background-color: var(--table-header-bg);
-            color: var(--table-header-text);
-        }
-
-        th, td {
-            padding: 12px 15px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        th {
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 0.5px;
-        }
-
-        /* Inputs inside table */
+        /* --- Input & Text Styling (BIGGER FONTS) --- */
         input[type="number"], input[type="text"] {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
             border: 1px solid var(--border-color);
             background-color: var(--input-bg);
             color: var(--text-color);
             border-radius: 4px;
             text-align: center;
+            font-size: 1.1rem; /* تكبير خط الأرقام */
+            font-weight: 500;
         }
 
-        input:disabled {
+        /* تنسيق خاص لاسم المادة ليأخذ أكثر من سطر */
+        textarea.name-input {
+            width: 100%;
+            height: 55px; /* ارتفاع يكفي لسطرين */
+            padding: 5px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            border-radius: 4px;
+            text-align: center;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: none; /* منع تغيير الحجم يدوياً */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.3;
+        }
+
+        input:disabled, textarea:disabled {
             border: none;
             background: transparent;
             font-weight: bold;
             color: var(--text-color);
+            opacity: 1;
+        }
+
+        /* Average Cell */
+        .avg-cell {
+            font-size: 1.3rem;
+            font-weight: bold;
         }
 
         /* Failing Grade Style */
-        .failing {
-            color: var(--fail-color) !important;
-            font-weight: bold;
-        }
+        .failing { color: var(--fail-color) !important; font-weight: bold; }
 
         /* --- Total GPA Section --- */
         .gpa-section {
@@ -229,66 +169,25 @@
             background-color: var(--table-bg);
             border-radius: 8px;
             text-align: center;
-            font-size: 1.5rem;
+            font-size: 1.8rem; /* تكبير المعدل النهائي */
             font-weight: bold;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             border: 1px solid var(--border-color);
         }
 
-        /* --- Modal (Popup) Styling --- */
-        .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 1000; 
-            left: 0;
-            top: 0;
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0,0,0,0.6); 
-            backdrop-filter: blur(2px);
-        }
+        /* --- Modal Styling --- */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(2px); }
+        .modal-content { background-color: var(--table-bg); margin: 15% auto; padding: 20px; border: 1px solid var(--border-color); width: 90%; max-width: 400px; border-radius: 10px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .modal h3 { margin-bottom: 15px; color: var(--text-color); }
+        .modal-inputs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .modal-actions { display: flex; justify-content: space-between; }
+        .close-btn { background-color: #ef4444; }
 
-        .modal-content {
-            background-color: var(--table-bg);
-            margin: 15% auto; 
-            padding: 20px;
-            border: 1px solid var(--border-color);
-            width: 90%;
-            max-width: 400px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-        }
-
-        .modal h3 {
-            margin-bottom: 15px;
-            color: var(--text-color);
-        }
-
-        .modal-inputs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .modal-actions {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .close-btn {
-            background-color: #ef4444; /* Red */
-        }
-
-        /* Responsive adjustments */
         @media (max-width: 768px) {
             header { flex-direction: column; text-align: center; }
             .logo-container { margin-bottom: 10px; }
-            .header-content h1 { font-size: 1.8rem; }
-            .verse { font-size: 1.2rem; }
-            .theme-toggle { margin-top: 10px; }
             .controls { justify-content: center; }
+            .header-content h1 { font-size: 2rem; }
         }
     </style>
 </head>
@@ -298,12 +197,10 @@
         <div class="logo-container">
             <img src="logo.png" alt="Engineering Logo">
         </div>
-        
         <div class="header-content">
             <h1>Grade Calc</h1>
             <div class="verse">وَقُلْ رَبِّ زِدْنِي عِلْمًا</div>
         </div>
-
         <button class="theme-toggle" onclick="toggleTheme()">☀️ Light Mode</button>
     </header>
 
@@ -319,14 +216,12 @@
             <table id="gradesTable">
                 <thead>
                     <tr>
-                        <th style="width: 140px;">Action</th>
-                        <th>Average</th>
-                        <th>Raise</th>
-                        <th>Final</th>
+                        <th style="width: 25%;">Material Name</th> <th style="width: 10%;">Credits</th>
                         <th>Partial</th>
-                        <th>Credits</th>
-                        <th>Material Name</th>
-                    </tr>
+                        <th>Final</th>
+                        <th>Raise</th>
+                        <th>Average</th>
+                        <th style="width: 15%;">Action</th> </tr>
                 </thead>
                 <tbody>
                     </tbody>
@@ -354,7 +249,7 @@
     </div>
 
     <script>
-        // --- بيانات الفصول (للتعبئة التلقائية) ---
+        // --- Data ---
         const semester3 = [
             { name: "Differential Geometry", credit: 3 },
             { name: "Analysis III", credit: 5 },
@@ -383,7 +278,7 @@
             { name: "Laboratory IV (Matlab, DAO)", credit: 3 }
         ];
 
-        // --- 1. Theme Toggling ---
+        // --- Theme ---
         function toggleTheme() {
             const body = document.body;
             const btn = document.querySelector('.theme-toggle');
@@ -400,9 +295,7 @@
             }
         }
 
-        // --- 2. Add Subject Logic ---
-        
-        // دالة لإضافة فصل كامل دفعة واحدة
+        // --- Add Rows (Logic Updated for Column Swap) ---
         function addSemester(semNumber) {
             let courses = [];
             if (semNumber === 3) courses = semester3;
@@ -413,40 +306,42 @@
             });
         }
 
-        // دالة إضافة صف (تقبل بيانات اختيارية للمادة والكريدت)
         function addSubjectRow(name = '', credit = '') {
             const tableBody = document.querySelector('#gradesTable tbody');
             const row = document.createElement('tr');
             
-            // قمنا بإضافة زر الحذف (X) بجانب زر Submit
+            // تم ترتيب الـ HTML هنا ليطابق ترتيب العواميد الجديد
+            // Name -> Credit -> Partial -> Final -> Raise -> Avg -> Action
+            
             row.innerHTML = `
+                <td>
+                    <textarea class="name-input" placeholder="Subject Name">${name}</textarea>
+                </td>
+                <td><input type="number" class="credits-input" placeholder="Cr" value="${credit}"></td>
+                <td><input type="number" class="partial-input" placeholder="0-100"></td>
+                <td><input type="number" class="final-input" placeholder="0-100"></td>
+                <td>
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+                        <span class="raise-value" style="font-size: 1.1rem; font-weight: bold;">0</span>
+                        <button class="btn btn-raise" onclick="openRaiseModal(this)">Calc</button>
+                    </div>
+                </td>
+                <td class="avg-cell">-</td>
                 <td>
                     <button class="btn btn-submit" onclick="submitRow(this)">Submit</button>
                     <button class="btn btn-remove" onclick="removeRow(this)">X</button>
                 </td>
-                <td class="avg-cell">-</td>
-                <td>
-                    <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
-                        <span class="raise-value">0</span>
-                        <button class="btn btn-raise" onclick="openRaiseModal(this)">Calc</button>
-                    </div>
-                </td>
-                <td><input type="number" class="final-input" placeholder="0-100"></td>
-                <td><input type="number" class="partial-input" placeholder="0-100"></td>
-                <td><input type="number" class="credits-input" placeholder="Cr" value="${credit}"></td>
-                <td><input type="text" class="name-input" placeholder="Subject Name" value="${name}"></td>
             `;
             tableBody.appendChild(row);
         }
 
-        // دالة لحذف صف
         function removeRow(btn) {
             const row = btn.closest('tr');
-            row.remove(); // حذف العنصر من الصفحة
-            calculateTotalGPA(); // إعادة حساب المعدل فوراً
+            row.remove();
+            calculateTotalGPA();
         }
 
-        // --- 3. Raise Calculation Logic ---
+        // --- Raise Logic ---
         let currentRaiseRow = null; 
 
         function openRaiseModal(btn) {
@@ -484,21 +379,18 @@
         }
 
         window.onclick = function(event) {
-            const modal = document.getElementById('raiseModal');
-            if (event.target == modal) {
-                closeModal();
-            }
+            if (event.target == document.getElementById('raiseModal')) closeModal();
         }
 
-        // --- 4. Submit & Edit Logic ---
+        // --- Submit Logic ---
         function submitRow(btn) {
             const row = btn.closest('tr');
-            const inputs = row.querySelectorAll('input');
-
-            // جلب القيم
+            
+            // تحديد العناصر (الأسماء بقيت كما هي لذلك اللوجيك يعمل بشكل صحيح)
             const finalInput = row.querySelector('.final-input');
             const partialInput = row.querySelector('.partial-input');
             const creditsInput = row.querySelector('.credits-input');
+            const nameInput = row.querySelector('.name-input'); // Textarea now
             const raiseSpan = row.querySelector('.raise-value');
             const avgCell = row.querySelector('.avg-cell');
 
@@ -511,7 +403,6 @@
                 return;
             }
 
-            // حساب المعدل
             const maxGrade = Math.max(f, p);
             const minGrade = Math.min(f, p);
             let baseAvg = (maxGrade * 0.6) + (minGrade * 0.4);
@@ -519,14 +410,15 @@
 
             avgCell.textContent = finalAvg.toFixed(2);
 
-            if (finalAvg < 60) {
-                avgCell.classList.add('failing');
-            } else {
-                avgCell.classList.remove('failing');
-            }
+            if (finalAvg < 60) avgCell.classList.add('failing');
+            else avgCell.classList.remove('failing');
 
-            inputs.forEach(input => input.disabled = true);
-            
+            // تعطيل الحقول
+            finalInput.disabled = true;
+            partialInput.disabled = true;
+            creditsInput.disabled = true;
+            nameInput.disabled = true;
+
             btn.textContent = 'Edit';
             btn.className = 'btn btn-edit';
             btn.onclick = function() { editRow(this) };
@@ -536,16 +428,14 @@
 
         function editRow(btn) {
             const row = btn.closest('tr');
-            const inputs = row.querySelectorAll('input');
-            
-            inputs.forEach(input => input.disabled = false);
+            row.querySelectorAll('input, textarea').forEach(input => input.disabled = false);
 
             btn.textContent = 'Submit';
             btn.className = 'btn btn-submit';
             btn.onclick = function() { submitRow(this) };
         }
 
-        // --- 5. Total GPA Calculation ---
+        // --- GPA Calculation ---
         function calculateTotalGPA() {
             const rows = document.querySelectorAll('#gradesTable tbody tr');
             let totalWeightedScore = 0;
@@ -572,19 +462,13 @@
                 const gpa = totalWeightedScore / totalCredits;
                 gpaSpan.textContent = gpa.toFixed(2);
                 
-                if (gpa < 60) {
-                    gpaSpan.classList.add('failing');
-                } else {
-                    gpaSpan.classList.remove('failing');
-                }
+                if (gpa < 60) gpaSpan.classList.add('failing');
+                else gpaSpan.classList.remove('failing');
             } else {
                 gpaSpan.textContent = "0.00";
                 gpaSpan.classList.remove('failing');
             }
         }
-        
-        // عند التحميل، لا نضيف أي مادة، نترك المستخدم يختار
-        // window.onload = function() { addSubjectRow(); } 
     </script>
 </body>
 </html>
