@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
     <style>
-        /* تعريف الألوان والمتغيرات */
+        /* --- CSS Variables --- */
         :root {
             --primary-blue: #1e3a5f;
             --accent-blue: #3b82f6;
@@ -20,6 +20,8 @@
             --table-header-text: #ffffff;
             --border-color: #ddd;
             --fail-color: #d32f2f;
+            --delib-color: #facc15; /* أصفر للاستلحاق */
+            --delib-text-dark: #854d0e; /* لون نص داكن للأصفر ليكون مقروءاً */
             --input-bg: #fff;
         }
 
@@ -30,14 +32,12 @@
             --table-header-bg: #0f172a;
             --border-color: #334155;
             --fail-color: #ff6b6b;
+            --delib-color: #fbbf24;
+            --delib-text-dark: #fffbeb; /* نص فاتح للخلفية الداكنة */
             --input-bg: #334155;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Roboto', 'Amiri', sans-serif;
@@ -47,7 +47,7 @@
             direction: ltr;
         }
 
-        /* --- Header Styling --- */
+        /* --- Header --- */
         header {
             background-color: var(--primary-blue);
             color: white;
@@ -69,7 +69,6 @@
             overflow: hidden;
             border: 2px solid white;
         }
-
         .logo-container img { width: 100%; height: auto; }
 
         .header-content { text-align: center; flex-grow: 1; }
@@ -88,9 +87,8 @@
         }
         .theme-toggle:hover { background: rgba(255, 255, 255, 0.1); border-color: white; }
 
-        /* --- Main Content --- */
+        /* --- Content --- */
         .container { max-width: 1200px; margin: 30px auto; padding: 0 15px; }
-
         .controls { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; margin-bottom: 15px; }
 
         .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.2s; color: white; }
@@ -101,81 +99,47 @@
         .btn-remove { background-color: #ef4444; padding: 8px 12px; font-size: 0.95rem; margin-left: 5px; }
         .btn-raise { background-color: var(--accent-blue); font-size: 0.9rem; padding: 6px 10px; border-radius: 4px; }
 
-        /* --- Table Styling --- */
-        .table-container {
-            overflow-x: auto;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
+        /* --- Table --- */
+        .table-container { overflow-x: auto; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
         table { width: 100%; border-collapse: collapse; background-color: var(--table-bg); text-align: center; }
         thead { background-color: var(--table-header-bg); color: var(--table-header-text); }
         th, td { padding: 12px 10px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
         th { text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px; }
 
-        /* --- Input & Text Styling (BIGGER FONTS) --- */
         input[type="number"], input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            background-color: var(--input-bg);
-            color: var(--text-color);
-            border-radius: 4px;
-            text-align: center;
-            font-size: 1.1rem; /* تكبير خط الأرقام */
-            font-weight: 500;
+            width: 100%; padding: 10px; border: 1px solid var(--border-color);
+            background-color: var(--input-bg); color: var(--text-color);
+            border-radius: 4px; text-align: center; font-size: 1.1rem; font-weight: 500;
         }
 
-        /* تنسيق خاص لاسم المادة ليأخذ أكثر من سطر */
         textarea.name-input {
-            width: 100%;
-            height: 55px; /* ارتفاع يكفي لسطرين */
-            padding: 5px;
-            border: 1px solid var(--border-color);
-            background-color: var(--input-bg);
-            color: var(--text-color);
-            border-radius: 4px;
-            text-align: center;
-            font-size: 1rem;
-            font-family: inherit;
-            resize: none; /* منع تغيير الحجم يدوياً */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1.3;
+            width: 100%; height: 55px; padding: 5px; border: 1px solid var(--border-color);
+            background-color: var(--input-bg); color: var(--text-color);
+            border-radius: 4px; text-align: center; font-size: 1rem; font-family: inherit;
+            resize: none; display: flex; align-items: center; justify-content: center; line-height: 1.3;
         }
 
-        input:disabled, textarea:disabled {
-            border: none;
-            background: transparent;
-            font-weight: bold;
-            color: var(--text-color);
-            opacity: 1;
+        input:disabled, textarea:disabled { border: none; background: transparent; font-weight: bold; color: var(--text-color); opacity: 1; }
+
+        .avg-cell { font-size: 1.3rem; font-weight: bold; }
+        
+        /* Failing & Deliberation Styles */
+        .failing { color: var(--fail-color) !important; }
+        
+        /* كلاس التداول (الأصفر) */
+        .deliberated { 
+            color: var(--delib-color) !important; 
+            text-shadow: 0 0 1px rgba(0,0,0,0.5); /* إضافة ظل خفيف ليبرز اللون */
         }
 
-        /* Average Cell */
-        .avg-cell {
-            font-size: 1.3rem;
-            font-weight: bold;
-        }
-
-        /* Failing Grade Style */
-        .failing { color: var(--fail-color) !important; font-weight: bold; }
-
-        /* --- Total GPA Section --- */
+        /* --- GPA Section --- */
         .gpa-section {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: var(--table-bg);
-            border-radius: 8px;
-            text-align: center;
-            font-size: 1.8rem; /* تكبير المعدل النهائي */
-            font-weight: bold;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--border-color);
+            margin-top: 20px; padding: 20px; background-color: var(--table-bg);
+            border-radius: 8px; text-align: center; font-size: 1.8rem; font-weight: bold;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid var(--border-color);
         }
 
-        /* --- Modal Styling --- */
+        /* --- Modal --- */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(2px); }
         .modal-content { background-color: var(--table-bg); margin: 15% auto; padding: 20px; border: 1px solid var(--border-color); width: 90%; max-width: 400px; border-radius: 10px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .modal h3 { margin-bottom: 15px; color: var(--text-color); }
@@ -216,15 +180,16 @@
             <table id="gradesTable">
                 <thead>
                     <tr>
-                        <th style="width: 25%;">Material Name</th> <th style="width: 10%;">Credits</th>
+                        <th style="width: 25%;">Material Name</th>
+                        <th style="width: 10%;">Credits</th>
                         <th>Partial</th>
                         <th>Final</th>
                         <th>Raise</th>
                         <th>Average</th>
-                        <th style="width: 15%;">Action</th> </tr>
+                        <th style="width: 15%;">Action</th>
+                    </tr>
                 </thead>
-                <tbody>
-                    </tbody>
+                <tbody></tbody>
             </table>
         </div>
 
@@ -295,7 +260,7 @@
             }
         }
 
-        // --- Add Rows (Logic Updated for Column Swap) ---
+        // --- Add Logic ---
         function addSemester(semNumber) {
             let courses = [];
             if (semNumber === 3) courses = semester3;
@@ -310,13 +275,8 @@
             const tableBody = document.querySelector('#gradesTable tbody');
             const row = document.createElement('tr');
             
-            // تم ترتيب الـ HTML هنا ليطابق ترتيب العواميد الجديد
-            // Name -> Credit -> Partial -> Final -> Raise -> Avg -> Action
-            
             row.innerHTML = `
-                <td>
-                    <textarea class="name-input" placeholder="Subject Name">${name}</textarea>
-                </td>
+                <td><textarea class="name-input" placeholder="Subject Name">${name}</textarea></td>
                 <td><input type="number" class="credits-input" placeholder="Cr" value="${credit}"></td>
                 <td><input type="number" class="partial-input" placeholder="0-100"></td>
                 <td><input type="number" class="final-input" placeholder="0-100"></td>
@@ -341,56 +301,44 @@
             calculateTotalGPA();
         }
 
-        // --- Raise Logic ---
+        // --- Raise Calculation Logic ---
         let currentRaiseRow = null; 
-
         function openRaiseModal(btn) {
-            const row = btn.closest('tr');
-            currentRaiseRow = row;
+            currentRaiseRow = btn.closest('tr');
             document.getElementById('classPartial').value = '';
             document.getElementById('classFinal').value = '';
             document.getElementById('raiseModal').style.display = 'block';
         }
-
         function closeModal() {
             document.getElementById('raiseModal').style.display = 'none';
             currentRaiseRow = null;
         }
-
         function applyRaise() {
             if (!currentRaiseRow) return;
-
             const cp = parseFloat(document.getElementById('classPartial').value) || 0;
             const cf = parseFloat(document.getElementById('classFinal').value) || 0;
-
             const maxVal = Math.max(cp, cf);
             const minVal = Math.min(cp, cf);
             const classAvg = (maxVal * 0.6) + (minVal * 0.4);
 
             let raiseAmount = 0;
-            if (classAvg < 66) {
-                raiseAmount = 66 - classAvg;
-            }
-
+            if (classAvg < 66) raiseAmount = 66 - classAvg;
+            
             raiseAmount = parseFloat(raiseAmount.toFixed(2));
             currentRaiseRow.querySelector('.raise-value').textContent = raiseAmount;
-
             closeModal();
         }
-
         window.onclick = function(event) {
             if (event.target == document.getElementById('raiseModal')) closeModal();
         }
 
-        // --- Submit Logic ---
+        // --- Submit & Calculation Logic (Updated) ---
         function submitRow(btn) {
             const row = btn.closest('tr');
-            
-            // تحديد العناصر (الأسماء بقيت كما هي لذلك اللوجيك يعمل بشكل صحيح)
             const finalInput = row.querySelector('.final-input');
             const partialInput = row.querySelector('.partial-input');
             const creditsInput = row.querySelector('.credits-input');
-            const nameInput = row.querySelector('.name-input'); // Textarea now
+            const nameInput = row.querySelector('.name-input');
             const raiseSpan = row.querySelector('.raise-value');
             const avgCell = row.querySelector('.avg-cell');
 
@@ -403,15 +351,38 @@
                 return;
             }
 
+            // 1. حساب المعدل الأساسي
             const maxGrade = Math.max(f, p);
             const minGrade = Math.min(f, p);
             let baseAvg = (maxGrade * 0.6) + (minGrade * 0.4);
+            
+            // 2. إضافة الـ Raise
             let finalAvg = baseAvg + raise;
 
+            // 3. تطبيق السقف (Maximum Cap) عند 100 - التعديل الأول
+            if (finalAvg > 100) finalAvg = 100;
+
+            // 4. منطق الاستلحاق التلقائي (Auto Deliberation) - التعديل الثاني
+            // إذا كانت العلامة بين 57 وأقل من 60
+            let isDeliberated = false;
+            if (finalAvg >= 57 && finalAvg < 60) {
+                finalAvg = 60;
+                isDeliberated = true;
+            }
+
+            // عرض النتيجة
             avgCell.textContent = finalAvg.toFixed(2);
 
-            if (finalAvg < 60) avgCell.classList.add('failing');
-            else avgCell.classList.remove('failing');
+            // 5. تطبيق الألوان
+            avgCell.classList.remove('failing', 'deliberated'); // مسح الكلاسات القديمة
+            
+            if (isDeliberated) {
+                // تلوين بالأصفر
+                avgCell.classList.add('deliberated');
+            } else if (finalAvg < 60) {
+                // تلوين بالأحمر
+                avgCell.classList.add('failing');
+            }
 
             // تعطيل الحقول
             finalInput.disabled = true;
@@ -429,13 +400,11 @@
         function editRow(btn) {
             const row = btn.closest('tr');
             row.querySelectorAll('input, textarea').forEach(input => input.disabled = false);
-
             btn.textContent = 'Submit';
             btn.className = 'btn btn-submit';
             btn.onclick = function() { submitRow(this) };
         }
 
-        // --- GPA Calculation ---
         function calculateTotalGPA() {
             const rows = document.querySelectorAll('#gradesTable tbody tr');
             let totalWeightedScore = 0;
@@ -462,8 +431,8 @@
                 const gpa = totalWeightedScore / totalCredits;
                 gpaSpan.textContent = gpa.toFixed(2);
                 
+                gpaSpan.classList.remove('failing');
                 if (gpa < 60) gpaSpan.classList.add('failing');
-                else gpaSpan.classList.remove('failing');
             } else {
                 gpaSpan.textContent = "0.00";
                 gpaSpan.classList.remove('failing');
