@@ -80,7 +80,7 @@
         .btn-edit { background-color: #f59e0b; padding: 8px 14px; font-size: 0.95rem; }
         .btn-remove { background-color: #ef4444; padding: 8px 12px; font-size: 0.95rem; margin-left: 5px; }
         .btn-raise { background-color: var(--accent-blue); font-size: 0.9rem; padding: 6px 10px; border-radius: 4px; }
-        .btn-clear { background-color: #64748b; } /* زر مسح البيانات */
+        .btn-clear { background-color: #64748b; }
         .btn-clear:hover { background-color: #475569; }
 
         .table-container { overflow-x: auto; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
@@ -127,7 +127,7 @@
     <div class="container">
         <div class="controls">
             <button class="btn btn-clear" onclick="clearData()">Clear Saved Data</button>
-            <button class="btn btn-add" onclick="addSubjectRow()">+ Material</button>
+            <button class="btn btn-add" onclick="addSubjectRow('', '', true)">+ Material</button>
             <button class="btn btn-add" onclick="addSemester(3)">+ Add Sem 3</button>
             <button class="btn btn-add" onclick="addSemester(4)">+ Add Sem 4</button>
         </div>
@@ -186,7 +186,7 @@
             }
         }
 
-        // --- Local Storage Functions (NEW) ---
+        // --- Local Storage Functions ---
         function saveData() {
             const rows = document.querySelectorAll('#gradesTable tbody tr');
             const data = [];
@@ -197,7 +197,7 @@
                     partial: row.querySelector('.partial-input').value,
                     final: row.querySelector('.final-input').value,
                     raise: row.querySelector('.raise-value').textContent,
-                    isSubmitted: row.querySelector('.btn-submit').textContent === 'Edit' // Check if row is in Submitted state
+                    isSubmitted: row.querySelector('.btn-submit').textContent === 'Edit'
                 });
             });
             localStorage.setItem('engGradeData', JSON.stringify(data));
@@ -208,15 +208,16 @@
             if (saved) {
                 const data = JSON.parse(saved);
                 data.forEach(item => {
-                    const row = addSubjectRow(item.name, item.credit); // Add row
-                    // Populate fields
+                    // Important: Pass 'false' to addSubjectRow to prevent saving while loading
+                    const row = addSubjectRow(item.name, item.credit, false); 
+                    
                     row.querySelector('.partial-input').value = item.partial;
                     row.querySelector('.final-input').value = item.final;
-                    row.querySelector('.raise-value').textContent = item.raise;
+                    row.querySelector('.raise-value').textContent = item.raise || "0";
                     
-                    // If it was submitted, re-submit it programmatically to apply logic/colors
                     if (item.isSubmitted) {
-                        submitRow(row.querySelector('.btn-submit'), false); // false = don't alert on errors (assuming saved data is valid)
+                        // Pass false to suppress alerts during auto-load
+                        submitRow(row.querySelector('.btn-submit'), false); 
                     }
                 });
             }
@@ -232,11 +233,13 @@
         // --- Add Logic ---
         function addSemester(semNumber) {
             let courses = (semNumber === 3) ? semester3 : semester4;
-            courses.forEach(course => addSubjectRow(course.name, course.credit));
-            saveData(); // Save after adding semester
+            // Only save AFTER adding all courses
+            courses.forEach(course => addSubjectRow(course.name, course.credit, false)); 
+            saveData();
         }
 
-        function addSubjectRow(name = '', credit = '') {
+        // Updated function with doSave flag
+        function addSubjectRow(name = '', credit = '', doSave = true) {
             const tableBody = document.querySelector('#gradesTable tbody');
             const row = document.createElement('tr');
             
@@ -258,14 +261,16 @@
                 </td>
             `;
             tableBody.appendChild(row);
-            saveData(); // Save after adding row
-            return row; // Return row for loadData usage
+            
+            // Only save if explicitly told to (avoids conflict during load)
+            if (doSave) saveData(); 
+            return row;
         }
 
         function removeRow(btn) {
             btn.closest('tr').remove();
             calculateTotalGPA();
-            saveData(); // Save after removing
+            saveData();
         }
 
         // --- Raise Logic ---
@@ -293,7 +298,7 @@
             
             currentRaiseRow.querySelector('.raise-value').textContent = parseFloat(raiseAmount.toFixed(2));
             closeModal();
-            saveData(); // Save after applying raise
+            saveData(); // Save new raise value
         }
         window.onclick = function(event) {
             if (event.target == document.getElementById('raiseModal')) closeModal();
@@ -311,7 +316,8 @@
 
             const f = parseFloat(finalInput.value);
             const p = parseFloat(partialInput.value);
-            const raise = parseFloat(raiseSpan.textContent);
+            // Use '|| 0' to prevent NaN if raise is empty
+            const raise = parseFloat(raiseSpan.textContent) || 0; 
 
             if (isNaN(f) || isNaN(p) || isNaN(parseFloat(creditsInput.value))) {
                 if(showAlert) alert("Please fill in all grades and credits correctly.");
@@ -357,7 +363,10 @@
             btn.onclick = function() { editRow(this) };
 
             calculateTotalGPA();
-            saveData(); // Save state
+            
+            // Only save if this was a manual action (showAlert is true), 
+            // OR if it's the automated load process (handled by loadData loop, but safe to call here if needed)
+            if (showAlert) saveData(); 
         }
 
         function editRow(btn) {
@@ -366,7 +375,7 @@
             btn.textContent = 'Submit';
             btn.className = 'btn btn-submit';
             btn.onclick = function() { submitRow(this) };
-            saveData(); // Save state (inputs unlocked)
+            saveData();
         }
 
         function calculateTotalGPA() {
