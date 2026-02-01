@@ -167,11 +167,11 @@
     </div>
 
     <script>
-        // --- Data ---
+        // --- Data Definitions ---
         const semester3 = [{name: "Differential Geometry", credit: 3}, {name: "Analysis III", credit: 5}, {name: "Computer Science III", credit: 3}, {name: "Mechanics II", credit: 4}, {name: "Mineral Chemistry", credit: 2}, {name: "Electricity II", credit: 3}, {name: "Probability", credit: 3}, {name: "Engineering Profession", credit: 1}, {name: "Foreign Language", credit: 3}, {name: "Industrial Drawing", credit: 1}, {name: "Laboratory III", credit: 2}];
         const semester4 = [{name: "Analysis IV", credit: 4}, {name: "Numerical Methods", credit: 3}, {name: "Modern Physics", credit: 3}, {name: "Statistics", credit: 3}, {name: "Electricity III", credit: 3}, {name: "Oral Communication", credit: 1}, {name: "Organic Chemistry", credit: 2}, {name: "Mechanics of Materials", credit: 3}, {name: "Thermodynamics", credit: 3}, {name: "Computer Science IV", credit: 2}, {name: "Laboratory IV (Matlab, DAO)", credit: 3}];
 
-        // --- Theme ---
+        // --- Theme Toggle ---
         function toggleTheme() {
             const body = document.body;
             const btn = document.querySelector('.theme-toggle');
@@ -186,7 +186,7 @@
             }
         }
 
-        // --- Local Storage Functions ---
+        // --- Save / Load Logic ---
         function saveData() {
             const rows = document.querySelectorAll('#gradesTable tbody tr');
             const data = [];
@@ -196,7 +196,8 @@
                     credit: row.querySelector('.credits-input').value,
                     partial: row.querySelector('.partial-input').value,
                     final: row.querySelector('.final-input').value,
-                    raise: row.querySelector('.raise-value').textContent,
+                    // IMPORTANT: Ensure we save exactly what is in the textContent
+                    raise: row.querySelector('.raise-value').textContent.trim() || "0",
                     isSubmitted: row.querySelector('.btn-submit').textContent === 'Edit'
                 });
             });
@@ -206,20 +207,27 @@
         function loadData() {
             const saved = localStorage.getItem('engGradeData');
             if (saved) {
-                const data = JSON.parse(saved);
-                data.forEach(item => {
-                    // Important: Pass 'false' to addSubjectRow to prevent saving while loading
-                    const row = addSubjectRow(item.name, item.credit, false); 
-                    
-                    row.querySelector('.partial-input').value = item.partial;
-                    row.querySelector('.final-input').value = item.final;
-                    row.querySelector('.raise-value').textContent = item.raise || "0";
-                    
-                    if (item.isSubmitted) {
-                        // Pass false to suppress alerts during auto-load
-                        submitRow(row.querySelector('.btn-submit'), false); 
-                    }
-                });
+                try {
+                    const data = JSON.parse(saved);
+                    data.forEach(item => {
+                        // Create row without saving yet
+                        const row = addSubjectRow(item.name, item.credit, false); 
+                        
+                        // Populate Inputs
+                        row.querySelector('.partial-input').value = item.partial;
+                        row.querySelector('.final-input').value = item.final;
+                        
+                        // Populate Raise (Default to 0 if missing)
+                        row.querySelector('.raise-value').textContent = item.raise && item.raise !== "" ? item.raise : "0";
+                        
+                        // If it was submitted, force a submit (without alert) to calculate average
+                        if (item.isSubmitted) {
+                            submitRow(row.querySelector('.btn-submit'), false); 
+                        }
+                    });
+                } catch (e) {
+                    console.error("Error loading data", e);
+                }
             }
         }
 
@@ -230,15 +238,15 @@
             }
         }
 
-        // --- Add Logic ---
+        // --- Row Management ---
         function addSemester(semNumber) {
             let courses = (semNumber === 3) ? semester3 : semester4;
-            // Only save AFTER adding all courses
+            // Add all rows first, DO NOT save per row
             courses.forEach(course => addSubjectRow(course.name, course.credit, false)); 
+            // Save once at the end
             saveData();
         }
 
-        // Updated function with doSave flag
         function addSubjectRow(name = '', credit = '', doSave = true) {
             const tableBody = document.querySelector('#gradesTable tbody');
             const row = document.createElement('tr');
@@ -262,8 +270,7 @@
             `;
             tableBody.appendChild(row);
             
-            // Only save if explicitly told to (avoids conflict during load)
-            if (doSave) saveData(); 
+            if (doSave) saveData();
             return row;
         }
 
@@ -273,20 +280,25 @@
             saveData();
         }
 
-        // --- Raise Logic ---
+        // --- Raise Logic (FIXED) ---
         let currentRaiseRow = null; 
+
         function openRaiseModal(btn) {
             currentRaiseRow = btn.closest('tr');
+            // Reset inputs
             document.getElementById('classPartial').value = '';
             document.getElementById('classFinal').value = '';
             document.getElementById('raiseModal').style.display = 'block';
         }
+
         function closeModal() {
             document.getElementById('raiseModal').style.display = 'none';
             currentRaiseRow = null;
         }
+
         function applyRaise() {
             if (!currentRaiseRow) return;
+
             const cp = parseFloat(document.getElementById('classPartial').value) || 0;
             const cf = parseFloat(document.getElementById('classFinal').value) || 0;
             const maxVal = Math.max(cp, cf);
@@ -296,15 +308,23 @@
             let raiseAmount = 0;
             if (classAvg < 66) raiseAmount = 66 - classAvg;
             
+            // 1. Update the Raise Value in the table
             currentRaiseRow.querySelector('.raise-value').textContent = parseFloat(raiseAmount.toFixed(2));
+            
+            // 2. IMPORTANT: Force Re-Submit to update the Total Average immediately
+            const submitBtn = currentRaiseRow.querySelector('.btn-submit');
+            // We pass 'false' so it doesn't annoy the user if other fields are empty
+            submitRow(submitBtn, false); 
+
             closeModal();
-            saveData(); // Save new raise value
+            saveData(); // Save immediately
         }
+
         window.onclick = function(event) {
             if (event.target == document.getElementById('raiseModal')) closeModal();
         }
 
-        // --- Submit & Calculation Logic ---
+        // --- Calculation Logic ---
         function submitRow(btn, showAlert = true) {
             const row = btn.closest('tr');
             const finalInput = row.querySelector('.final-input');
@@ -316,9 +336,12 @@
 
             const f = parseFloat(finalInput.value);
             const p = parseFloat(partialInput.value);
-            // Use '|| 0' to prevent NaN if raise is empty
-            const raise = parseFloat(raiseSpan.textContent) || 0; 
+            
+            // Fix: ensure we don't get NaN if text is empty
+            const raiseText = raiseSpan.textContent.trim();
+            const raise = raiseText === "" ? 0 : parseFloat(raiseText);
 
+            // Validation
             if (isNaN(f) || isNaN(p) || isNaN(parseFloat(creditsInput.value))) {
                 if(showAlert) alert("Please fill in all grades and credits correctly.");
                 return;
@@ -330,7 +353,7 @@
             let baseAvg = (maxGrade * 0.6) + (minGrade * 0.4);
             
             // 2. Add Raise
-            let finalAvg = baseAvg + raise;
+            let finalAvg = baseAvg + (isNaN(raise) ? 0 : raise);
 
             // 3. Cap at 100
             if (finalAvg > 100) finalAvg = 100;
@@ -342,9 +365,10 @@
                 isDeliberated = true;
             }
 
+            // Display
             avgCell.textContent = finalAvg.toFixed(2);
 
-            // 5. Colors
+            // Colors
             avgCell.classList.remove('failing', 'deliberated');
             if (isDeliberated) {
                 avgCell.classList.add('deliberated');
@@ -352,21 +376,21 @@
                 avgCell.classList.add('failing');
             }
 
-            // Disable Inputs
+            // Lock Inputs
             finalInput.disabled = true;
             partialInput.disabled = true;
             creditsInput.disabled = true;
             nameInput.disabled = true;
 
+            // Toggle Button State
             btn.textContent = 'Edit';
             btn.className = 'btn btn-edit';
             btn.onclick = function() { editRow(this) };
 
             calculateTotalGPA();
             
-            // Only save if this was a manual action (showAlert is true), 
-            // OR if it's the automated load process (handled by loadData loop, but safe to call here if needed)
-            if (showAlert) saveData(); 
+            // Only save if explicitly asked (to avoid race conditions during load)
+            if (showAlert) saveData();
         }
 
         function editRow(btn) {
@@ -411,7 +435,7 @@
             }
         }
 
-        // Run Load on Start
+        // Initialize
         window.onload = loadData;
     </script>
 </body>
